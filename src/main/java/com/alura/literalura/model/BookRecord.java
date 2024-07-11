@@ -11,7 +11,7 @@ public record BookRecord(
     @JsonAlias("title") String title,
     @JsonAlias("name") Author author,
     @JsonAlias("languages") List<String> availableLanguages,
-    @JsonAlias("download_count") Integer downloads
+    @JsonAlias("download_count") Double downloads
 ) {
 
 }
