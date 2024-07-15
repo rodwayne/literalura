@@ -24,4 +24,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     @Query("SELECT b FROM Author a JOIN a.books b ORDER BY b.downloads DESC LIMIT 10")
     List<Book> topBooks();
 
+    @Query("SELECT a FROM Author a WHERE a.deceaseDate > :date")
+    List<Author> searchActiveAuthors(@Param("date") Integer date);
+
 }

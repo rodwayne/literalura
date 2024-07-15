@@ -36,6 +36,7 @@ public class Main {
                 3 - List all registered books
                 4 - List registered authors
                 5 - List top 10 books
+                6 - List active authors
                 ----------------------------------------------
                 0 - Exit
                 ----------------------------------------------
@@ -66,6 +67,11 @@ public class Main {
                     case 5:
                         topBooks();
                         break;
+
+                    case 6:
+                        listActiveAuthors();
+                        break;
+
                     case 0:
                         System.out.println("Closing Literalura");
 
@@ -217,6 +223,35 @@ public class Main {
                         "\nLanguage: " + b.getLanguage() +
                         "\nDownloads: " + b.getDownloads() +
                         "\n----------------------------------------\n"));
+    }
+
+    public void listActiveAuthors() {
+        System.out.println("""
+                -----------------------
+                List active authors
+                -----------------------
+                 """);
+
+        System.out.println("Enter a year: ");
+
+        try {
+            var date = Integer.valueOf(scanner.nextLine());
+            List<Author> authors = repository.searchActiveAuthors(date);
+
+            if (!authors.isEmpty()) {
+                authors.forEach(a -> System.out.println(
+                "-------------- Author -----------------" +
+                        "\nName: " + a.getName() +
+                        "\nBirth date: " + a.getBirthDate() +
+                        "\nDecease date: " + a.getDeceaseDate() +
+                        "\nBooks: " + a.getBooks().stream().map(b -> b.getTitle()).collect(Collectors.toList()) +
+                        "\n----------------------------------------\n"));
+            } else {
+                System.out.println("No active authors in " + date);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Enter a valid year: " + e.getMessage());
+        }
     }
 
 }
