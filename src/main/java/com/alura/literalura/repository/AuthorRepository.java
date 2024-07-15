@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.alura.literalura.model.Author;
 import com.alura.literalura.model.Book;
+import com.alura.literalura.model.Language;
 
 public interface AuthorRepository extends JpaRepository<Author, Long> {
     
@@ -26,5 +27,8 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
 
     @Query("SELECT a FROM Author a WHERE a.deceaseDate > :date")
     List<Author> searchActiveAuthors(@Param("date") Integer date);
+
+    @Query("SELECT b FROM Author a JOIN a.books b WHERE b.language = :language")
+    List<Book> searchBookByLanguage(@Param("language") Language language);
 
 }

@@ -1,5 +1,6 @@
 package com.alura.literalura.main;
 
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -9,6 +10,7 @@ import com.alura.literalura.model.Author;
 import com.alura.literalura.model.Book;
 import com.alura.literalura.model.BookData;
 import com.alura.literalura.model.Data;
+import com.alura.literalura.model.Language;
 import com.alura.literalura.repository.AuthorRepository;
 import com.alura.literalura.service.Api;
 import com.alura.literalura.service.ConvertResponse;
@@ -37,6 +39,7 @@ public class Main {
                 4 - List registered authors
                 5 - List top 10 books
                 6 - List active authors
+                7 - List books by language
                 ----------------------------------------------
                 0 - Exit
                 ----------------------------------------------
@@ -70,6 +73,10 @@ public class Main {
 
                     case 6:
                         listActiveAuthors();
+                        break;
+                    
+                    case 7:
+                        listBooksByLanguage();
                         break;
 
                     case 0:
@@ -240,17 +247,89 @@ public class Main {
 
             if (!authors.isEmpty()) {
                 authors.forEach(a -> System.out.println(
-                "-------------- Author -----------------" +
-                        "\nName: " + a.getName() +
-                        "\nBirth date: " + a.getBirthDate() +
-                        "\nDecease date: " + a.getDeceaseDate() +
-                        "\nBooks: " + a.getBooks().stream().map(b -> b.getTitle()).collect(Collectors.toList()) +
-                        "\n----------------------------------------\n"));
+                        "-------------- Author -----------------" +
+                                "\nName: " + a.getName() +
+                                "\nBirth date: " + a.getBirthDate() +
+                                "\nDecease date: " + a.getDeceaseDate() +
+                                "\nBooks: " + a.getBooks().stream().map(b -> b.getTitle()).collect(Collectors.toList())
+                                +
+                                "\n----------------------------------------\n"));
             } else {
                 System.out.println("No active authors in " + date);
             }
         } catch (NumberFormatException e) {
             System.out.println("Enter a valid year: " + e.getMessage());
+        }
+    }
+
+    public void listBooksByLanguage() {
+        System.out.println("""
+                -----------------------
+                 List books by language
+                -----------------------
+                """);
+
+        var menu = """
+                -----------------
+                Choose a language
+                -----------------
+                1 - Spanish
+                2 - French
+                3 - English
+                4 - Portuguese
+                -----------------
+                """;
+
+        System.out.println(menu);
+
+        try {
+            var option = Integer.valueOf(scanner.nextLine());
+
+            switch (option) {
+                case 1:
+                    searchBooksByLanguage("es");
+                    break;
+
+                case 2:
+                    searchBooksByLanguage("fr");
+                    break;
+
+                case 3:
+                    searchBooksByLanguage("en");
+                    break;
+
+                case 4:
+                    searchBooksByLanguage("pt");
+                    break;
+
+                default:
+                    System.out.println("Invalid option");
+                    break;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid option: " + e.getMessage());
+        }
+    }
+
+    public void searchBooksByLanguage(String language) {
+        try {
+            Language languageEnum = Language.valueOf(language.toUpperCase());
+            List<Book> books = repository.searchBookByLanguage(languageEnum);
+
+            if (books.isEmpty()) {
+                System.out.println("No registered books in that language");
+            } else {
+                books.forEach(b -> System.out.println(
+                "-------------- Book -----------------" +
+                        "\nTitle: " + b.getTitle() +
+                        "\nAuthor: " + b.getAuthor().getName() +
+                        "\nLanguage: " + b.getLanguage() +
+                        "\nDownloads: " + b.getDownloads() +
+                        "\n----------------------------------------\n"));
+            }
+
+        } catch (IllegalCharsetNameException e) {
+            System.out.println("Enter a valid name in the specified format");
         }
     }
 
